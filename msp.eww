@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<workspace>
+  <project>
+    <path>$WS_DIR$\LDC.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\..\MSP430F149AY_LDC_1000\LDC_1000.ewp</path>
+  </project>
+  <batchBuild/>
+</workspace>
+
+
