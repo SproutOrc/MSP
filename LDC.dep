@@ -2,7 +2,7 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>1614117856</fileChecksum>
+  <fileChecksum>3824682238</fileChecksum>
   <configuration>
     <name>Debug</name>
     <outputs>
@@ -28,6 +28,9 @@
       <file>$PROJ_DIR$\..\MSP430F149AY_LDC_1000\config.h</file>
       <file>$PROJ_DIR$\Debug\Obj\config.pbi</file>
       <file>$PROJ_DIR$\..\MSP430F149AY_LDC_1000\main.c</file>
+      <file>$PROJ_DIR$\spi.h</file>
+      <file>$TOOLKIT_DIR$\inc\msp430.h</file>
+      <file>$PROJ_DIR$\spi.c</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\main.c</name>
@@ -36,19 +39,15 @@
           <name>BICOMP</name>
           <file> 14</file>
         </tool>
-        <tool>
-          <name>ICC430</name>
-          <file> 6</file>
-        </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 2 13 0 10</file>
+          <file> 23 2 13 0</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 2 13 0 10</file>
+          <file> 23 2 13 0</file>
         </tool>
       </inputs>
     </file>
@@ -103,7 +102,7 @@
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 17 7 6 4</file>
+          <file> 17 7 6 15 4</file>
         </tool>
       </inputs>
     </file>
@@ -115,6 +114,29 @@
           <file> 9</file>
         </tool>
       </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\spi.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 18</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 15</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 2 13 0 22</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 2 13 0 22</file>
+        </tool>
+      </inputs>
     </file>
   </configuration>
   <configuration>

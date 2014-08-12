@@ -1,21 +1,8 @@
 #include <msp430f5529.h>
 #include "LDC1000_cmd.h"
+#include "spi.h"
 
 void SetVCoreUp(unsigned int level);
-
-char spi_readByte( char addr, char * data);
-char spi_readWord(char addr, unsigned int * data);  // Big Endian
-char spi_readBytes( char addr, char * buffer, unsigned char len);
-char spi_writeByte(char addr, char data);
-char spi_writeWord(char addr, unsigned int data);  // Big Endian
-char spi_writeBytes( char addr, char * buffer, unsigned char len);
-
-static unsigned char txlen;
-static unsigned char rxlen;
-static char *txbuf;
-static char *rxbuf;
-static char txaddr;
-static char wordbuf[2];
 
 unsigned char proximtyData[2];
 unsigned char frequencyData[3];
@@ -27,7 +14,7 @@ unsigned int pro;
 #define RPMIN 0x3a
 #define RPMAX 0x13
 
-void Init(void)
+void initUART(void)
 {
 	UCA0CTL1 = UCSWRST;    //置位UCSWRST,使USCI复位，在其为1时初始化所有USCI寄存器
 	UCA0CTL0 &= ~UC7BIT;       //设置数据长度为8位
@@ -44,20 +31,9 @@ void Init(void)
 	_BIS_SR(GIE);           //开可屏蔽中断
 }
 
-
-/** @} */
-/*
- * main.c
- */
-char main(void) {
-
-	WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
-
-	SetVCoreUp(1);
-	SetVCoreUp(2);
-	SetVCoreUp(3);
-
-//	//UCS SETTING
+void initClock()
+{
+    //	//UCS SETTING
     UCSCTL3 |= SELREF__REFOCLK;
 
     __bis_SR_register(SCG0);                  // Disable the FLL control loop
@@ -71,11 +47,14 @@ char main(void) {
 	UCSCTL4 |= SELA__DCOCLK + SELS__XT1CLK +SELM__DCOCLK; //ACLK,SMCLK,MCLK Source select
     UCSCTL5 |= DIVPA_2;                                   //ACLK output divide
     UCSCTL6 |= XT1DRIVE_3 + XCAP_0;                       //XT1 cap
+}
 
-    //PORT INIT
+void initPort() 
+{
+       //PORT INIT
 
     P1DIR |= BIT0;                        // LDC CLK for Freq counter (set to output selected clock)
-    P1SEL |=BIT0;
+    P1SEL |= BIT0;
 
 	// LEDs
 	P7DIR |= BIT0;
@@ -90,8 +69,11 @@ char main(void) {
 	// initialize SPI
 	P4DIR |= BIT0;  // Output
 	P4SEL &= ~BIT0;
-	
-	//SPI SETUP
+}
+
+void initSPI()
+{
+    //SPI SETUP
 	P4SEL |=BIT1 + BIT2 + BIT3;
 	UCB1CTL1 |=UCSWRST;
 	UCB1CTL0 |= UCMST+UCMSB+UCSYNC+UCCKPL;   // 3-pin, 8-bit SPI master,Clock polarity high, MSB
@@ -99,11 +81,12 @@ char main(void) {
 	UCB1BR0 = 0x06;
     UCB1BR1 = 0;
     UCB1CTL1 &= ~UCSWRST;
+}
 
-    /*****************TEST*********TEST***************TEST*********/
-
-    //read all REG value using default setting
-    char orgVal[20];
+void initLDC1000()
+{
+       //read all REG value using default setting
+    unsigned char orgVal[20];
 
     //write to register
     spi_writeByte(LDC1000_CMD_RPMAX,       RPMAX);
@@ -123,12 +106,24 @@ char main(void) {
 	//read all registers
 
     spi_readBytes(LDC1000_CMD_REVID, &orgVal[0],12);
+}
 
-    int i;
+void main(void) {
+
+	WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
+
+	SetVCoreUp(1);
+	SetVCoreUp(2);
+	SetVCoreUp(3);
+    
+    initClock();
+    initPort();
+    initSPI();
+    initLDC1000();
+    initUART();
 
     //read all registers using extended SPI
-    while (1)
-    {
+    while (1) {
         spi_readBytes(LDC1000_CMD_PROXLSB,&proximtyData[0],2);
         spi_readBytes(LDC1000_CMD_FREQCTRLSB,&frequencyData[0],3);
         pro = 0;
@@ -136,158 +131,30 @@ char main(void) {
         pro <<= 8;
         pro += proximtyData[0];
         
-       fre = 0;
-       fre += frequencyData[2];
-       fre <<= 8;
-       fre += frequencyData[1];
-       fre <<= 8;
-       fre += frequencyData[0];
+        fre = 0;
+        fre += frequencyData[2];
+        fre <<= 8;
+        fre += frequencyData[1];
+        fre <<= 8;
+        fre += frequencyData[0];
 
-      __no_operation();
+
+        int i;
+        unsigned char Data[5];
+        Data[0] = proximtyData[0];
+        Data[1] = proximtyData[1];;
+        Data[2] = frequencyData[0];
+        Data[3] = frequencyData[1];
+        Data[4] = frequencyData[2];
+        for(i=0;i<5;i++)
+        {
+            UCA0TXBUF = Data[i];
+            while (!(UCA0IFG & UCTXIFG));
+        }
+
+        __no_operation();
     }
-	return 0;
 }
-
-
-/**sub functions**/
-
-char spi_readByte( char addr, char * data)
-{
-	    rxlen = 1;
-		rxbuf = data;
-		txaddr = addr | 0x80;
-
-		P4OUT &= ~BIT0;
-		while (!(UCB1IFG&UCTXIFG));
-		UCB1TXBUF = txaddr;
-		while (!(UCB1IFG&UCTXIFG));
-		UCB1TXBUF = 0;
-		while (UCB1STAT & UCBUSY);
-		* rxbuf = UCB1RXBUF;
-
-		while (UCB1STAT & UCBUSY);
-		P4OUT |= BIT0;
-
-		return 0;
-}
-
-char spi_readWord(char addr, unsigned int * data)
-{
-		rxlen = 2;
-		rxbuf = &wordbuf[0];
-		txaddr = addr | 0x80;
-
-		P4OUT &= ~BIT0;
-		while (!(UCB1IFG&UCTXIFG));
-		UCB1TXBUF = txaddr;
-		while (!(UCB1IFG&UCTXIFG));
-		UCB1TXBUF = 0;
-		while (UCB1STAT & UCBUSY);
-		* rxbuf = UCB1RXBUF;
-		rxbuf++;
-		while (!(UCB1IFG&UCTXIFG));
-		UCB1TXBUF = 0;
-		while (UCB1STAT & UCBUSY);
-		* rxbuf = UCB1RXBUF;
-
-		while (UCB1STAT & UCBUSY);
-		P4OUT |= BIT0;
-
-		return 0;
-
-}
-char spi_readBytes( char addr, char * buffer, unsigned char len)
-{
-		rxlen = len;
-		rxbuf = buffer;
-		txaddr = addr | 0x80;
-
-		P4OUT &= ~BIT0;
-		while (!(UCB1IFG&UCTXIFG));
-		UCB1TXBUF = txaddr;
-
-		while (rxlen > 0) {
-			while (!(UCB1IFG&UCTXIFG));
-			UCB1TXBUF = 0;
-			while (UCB1STAT & UCBUSY);
-			* rxbuf = UCB1RXBUF;
-			rxbuf++;
-			rxlen--;
-			}
-
-		while (UCB1STAT & UCBUSY);
-		P4OUT |= BIT0;
-
-		return 0;
-	}
-
-char spi_writeByte(char addr, char data)
-{
-		wordbuf[0] = data;          // copy from stack to memory
-		txlen = 1;
-		txbuf = &wordbuf[0];
-		txaddr = addr & ~0x80;
-
-		P4OUT &= ~BIT0;
-		while (!(UCB1IFG&UCTXIFG));
-		UCB1TXBUF = txaddr;
-		while (!(UCB1IFG&UCTXIFG));
-		UCB1TXBUF = *txbuf;
-
-		while (UCB1STAT & UCBUSY);
-		P4OUT |= BIT0;
-
-		return 0;
-	}
-
-char spi_writeWord(char addr, unsigned int data)
-{
-		wordbuf[0] = data >> 8;    // Big Endian
-		wordbuf[1] = data & 0xFF;
-		txlen = 2;
-		txbuf = &wordbuf[0];
-		txaddr = addr & ~0x80;
-
-		P4OUT &= ~BIT0;
-		while (!(UCB1IFG&UCTXIFG));
-		UCB1TXBUF = txaddr;
-		while (!(UCB1IFG&UCTXIFG));
-		UCB1TXBUF = *txbuf;
-		txbuf++;
-		while (!(UCB1IFG&UCTXIFG));
-		UCB1TXBUF = *txbuf;
-
-		while (UCB1STAT & UCBUSY);
-		P4OUT |= BIT0;
-
-		return 0;
-
-}
-
-char spi_writeBytes( char addr, char * buffer, unsigned char len)
-{
-		txlen = len;
-		txbuf = buffer;
-		txaddr = addr & ~0x80;
-
-		P4OUT &= ~BIT0;
-		while (!(UCB1IFG&UCTXIFG));
-		UCB1TXBUF = txaddr;
-
-		while (txlen > 0) {
-			while (!(UCB1IFG&UCTXIFG));
-			UCB1TXBUF = *txbuf;
-			txbuf++;
-			txlen--;
-				}
-
-		while (UCB1STAT & UCBUSY);
-		P4OUT |= BIT0;
-
-		return 0;
-
-	}
-
 
 void SetVCoreUp (unsigned int level)
 {

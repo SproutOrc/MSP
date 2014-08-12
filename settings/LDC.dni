@@ -27,7 +27,7 @@ TypeViolation=1
 UnspecRange=1
 ActionState=1
 [DebugChecksum]
-Checksum=-1196623748
+Checksum=1370797605
 [State Storage]
 Control Register=-1
 [Sequencer]
@@ -48,8 +48,10 @@ ShowArgs=0
 [Disassembly]
 MixedMode=1
 [Breakpoints]
-Bp0=_ "STD_CODE" "{$PROJ_DIR$\main.c}.146.7" 1 0 0 0 "" 0 ""
-Count=1
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\main.c}.34.1" 0 0 0 0 "" 0 ""
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\main.c}.34.1" 0 0 0 0 "" 0 ""
+Bp2=_ "STD_CODE" "{$PROJ_DIR$\main.c}.34.1" 0 0 0 0 "" 0 ""
+Count=3
 [FET]
 Clock mode=46
 Extended Clock mode=65535
