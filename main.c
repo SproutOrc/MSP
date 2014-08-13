@@ -1,7 +1,8 @@
 #include <msp430f5529.h>
 #include "LDC1000_cmd.h"
 #include "spi.h"
-
+#include "motion.h"
+#include "pwm.h"
 
 
 void SetVCoreUp(unsigned int level);
@@ -146,6 +147,11 @@ void initLDC1000()
     spi_readBytes(LDC1000_CMD_REVID, &orgVal[0],12);
 }
 
+void initTime()
+{
+    
+}
+
 void main(void) {
     int i;
     WDTCTL = WDTPW | WDTHOLD;   // Stop watchdog timer
@@ -155,16 +161,18 @@ void main(void) {
     SetVCoreUp(3);*/
     
 //   initClock();
+    //UCSCTL4|=SELS_5;
     initPort();
     initSPI();
     initLDC1000();
     initUART();
+    initMotion();
+    initPWM();
     _EINT();
+    stop();
     
-
     //read all registers using extended SPI
     while (1) {
-        
         spi_readBytes(LDC1000_CMD_PROXLSB,&proximtyData[0],2);
         spi_readBytes(LDC1000_CMD_FREQCTRLSB,&frequencyData[0],3);
         pro = 0;

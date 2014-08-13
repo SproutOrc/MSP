@@ -4,36 +4,88 @@
   <ConfigDictionary>
     <CurrentConfigs>
       <Project>LDC/Debug</Project>
+      <Project>pwm/Debug</Project>
     </CurrentConfigs>
+    <CurrentProj>LDC</CurrentProj>
+    <OverviewSelected>0</OverviewSelected>
   </ConfigDictionary>
   <Desktop>
     <Static>
       <Workspace>
         <ColumnWidths>
-          <Column0>48</Column0>
+          <Column0>124</Column0>
           <Column1>27</Column1>
           <Column2>27</Column2>
           <Column3>27</Column3>
         </ColumnWidths>
       </Workspace>
-      <TerminalIO/>
       <Build>
+        <PreferedWindows>
+          <Position>3</Position>
+          <ScreenPosX>0</ScreenPosX>
+          <ScreenPosY>0</ScreenPosY>
+          <Windows>
+            <Window>
+              <Factory>Debug-Log</Factory>
+            </Window>
+          </Windows>
+        </PreferedWindows>
         <ColumnWidth0>20</ColumnWidth0>
-        <ColumnWidth1>702</ColumnWidth1>
-        <ColumnWidth2>187</ColumnWidth2>
-        <ColumnWidth3>46</ColumnWidth3>
+        <ColumnWidth1>1155</ColumnWidth1>
+        <ColumnWidth2>308</ColumnWidth2>
+        <ColumnWidth3>77</ColumnWidth3>
       </Build>
+      <TerminalIO/>
+      <Debug-Log>
+        <PreferedWindows>
+          <Position>3</Position>
+          <ScreenPosX>0</ScreenPosX>
+          <ScreenPosY>0</ScreenPosY>
+          <Windows>
+            <Window>
+              <Factory>Build</Factory>
+            </Window>
+          </Windows>
+        </PreferedWindows>
+        <ColumnWidth0>20</ColumnWidth0>
+        <ColumnWidth1>1541</ColumnWidth1>
+      </Debug-Log>
+      <DRIVER_CUSTOM_SFR>
+        <col-names>
+          <item>Access</item>
+          <item>Address</item>
+          <item>Name</item>
+          <item>Size</item>
+          <item>Zone</item>
+          <item>_I0</item>
+        </col-names>
+        <col-widths>
+          <item>120</item>
+          <item>150</item>
+          <item>150</item>
+          <item>50</item>
+          <item>120</item>
+          <item>20</item>
+        </col-widths>
+        <PreferedWindows>
+          <Position>3</Position>
+          <ScreenPosX>0</ScreenPosX>
+          <ScreenPosY>0</ScreenPosY>
+          <Windows/>
+        </PreferedWindows>
+      </DRIVER_CUSTOM_SFR>
     </Static>
     <Windows>
       <Wnd0>
         <Tabs>
           <Tab>
-            <Identity>TabID-27444-15595</Identity>
+            <Identity>TabID-24775-872</Identity>
             <TabName>Workspace</TabName>
             <Factory>Workspace</Factory>
             <Session>
               <NodeDict>
                 <ExpandedNode>LDC</ExpandedNode>
+                <ExpandedNode>pwm</ExpandedNode>
               </NodeDict>
             </Session>
           </Tab>
@@ -43,9 +95,15 @@
       <Wnd1>
         <Tabs>
           <Tab>
-            <Identity>TabID-3333-15638</Identity>
+            <Identity>TabID-18293-3040</Identity>
             <TabName>Build</TabName>
             <Factory>Build</Factory>
+            <Session/>
+          </Tab>
+          <Tab>
+            <Identity>TabID-9950-5039</Identity>
+            <TabName>Debug Log</TabName>
+            <Factory>Debug-Log</Factory>
             <Session/>
           </Tab>
         </Tabs>
@@ -60,46 +118,87 @@
         </Tab>
         <Tab>
           <Factory>TextEditor</Factory>
+          <Filename>$WS_DIR$\motion.c</Filename>
+          <XPos>0</XPos>
+          <YPos>0</YPos>
+          <SelStart>0</SelStart>
+          <SelEnd>0</SelEnd>
+          <XPos2>0</XPos2>
+          <YPos2>42</YPos2>
+          <SelStart2>1215</SelStart2>
+          <SelEnd2>1215</SelEnd2>
+        </Tab>
+        <Tab>
+          <Factory>TextEditor</Factory>
+          <Filename>$WS_DIR$\motion.h</Filename>
+          <XPos>0</XPos>
+          <YPos>0</YPos>
+          <SelStart>0</SelStart>
+          <SelEnd>0</SelEnd>
+          <XPos2>0</XPos2>
+          <YPos2>0</YPos2>
+          <SelStart2>356</SelStart2>
+          <SelEnd2>356</SelEnd2>
+        </Tab>
+        <Tab>
+          <Factory>TextEditor</Factory>
           <Filename>$WS_DIR$\main.c</Filename>
           <XPos>0</XPos>
           <YPos>0</YPos>
           <SelStart>0</SelStart>
           <SelEnd>0</SelEnd>
           <XPos2>0</XPos2>
-          <YPos2>180</YPos2>
-          <SelStart2>5197</SelStart2>
-          <SelEnd2>5197</SelEnd2>
+          <YPos2>161</YPos2>
+          <SelStart2>4580</SelStart2>
+          <SelEnd2>4580</SelEnd2>
         </Tab>
-        <ActiveTab>1</ActiveTab>
+        <ActiveTab>3</ActiveTab>
         <Tab>
           <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\spi.c</Filename>
+          <Filename>$WS_DIR$\pwm.c</Filename>
           <XPos>0</XPos>
           <YPos>0</YPos>
           <SelStart>0</SelStart>
           <SelEnd>0</SelEnd>
           <XPos2>0</XPos2>
-          <YPos2>50</YPos2>
-          <SelStart2>1318</SelStart2>
-          <SelEnd2>1318</SelEnd2>
+          <YPos2>0</YPos2>
+          <SelStart2>425</SelStart2>
+          <SelEnd2>432</SelEnd2>
+        </Tab>
+        <Tab>
+          <Factory>TextEditor</Factory>
+          <Filename>$WS_DIR$\pwm.h</Filename>
+          <XPos>0</XPos>
+          <YPos>0</YPos>
+          <SelStart>0</SelStart>
+          <SelEnd>0</SelEnd>
+          <XPos2>0</XPos2>
+          <YPos2>0</YPos2>
+          <SelStart2>41</SelStart2>
+          <SelEnd2>48</SelEnd2>
         </Tab>
       </Pane>
       <ActivePane>0</ActivePane>
+      <Pane/>
       <Sizes>
         <Pane>
-          <X>1000000</X>
-          <Y>1000000</Y>
+          <X>500000</X>
+          <Y>500000</Y>
+        </Pane>
+        <Pane>
+          <X>500000</X>
+          <Y>500000</Y>
         </Pane>
       </Sizes>
-      <SplitMode>1</SplitMode>
+      <SplitMode>4</SplitMode>
     </Editor>
     <Positions>
       <Top>
         <Row0>
           <Sizes>
-            <Toolbar-02DE2210>
+            <Toolbar-02B62210>
               <key>iaridepm.enu1</key>
-            </Toolbar-02DE2210>
+            </Toolbar-02B62210>
           </Sizes>
         </Row0>
         <Row1>
@@ -156,6 +255,156 @@
         <Row18>
           <Sizes/>
         </Row18>
+        <Row19>
+          <Sizes/>
+        </Row19>
+        <Row20>
+          <Sizes/>
+        </Row20>
+        <Row21>
+          <Sizes/>
+        </Row21>
+        <Row22>
+          <Sizes/>
+        </Row22>
+        <Row23>
+          <Sizes/>
+        </Row23>
+        <Row24>
+          <Sizes/>
+        </Row24>
+        <Row25>
+          <Sizes/>
+        </Row25>
+        <Row26>
+          <Sizes/>
+        </Row26>
+        <Row27>
+          <Sizes/>
+        </Row27>
+        <Row28>
+          <Sizes/>
+        </Row28>
+        <Row29>
+          <Sizes/>
+        </Row29>
+        <Row30>
+          <Sizes/>
+        </Row30>
+        <Row31>
+          <Sizes/>
+        </Row31>
+        <Row32>
+          <Sizes/>
+        </Row32>
+        <Row33>
+          <Sizes/>
+        </Row33>
+        <Row34>
+          <Sizes/>
+        </Row34>
+        <Row35>
+          <Sizes/>
+        </Row35>
+        <Row36>
+          <Sizes/>
+        </Row36>
+        <Row37>
+          <Sizes/>
+        </Row37>
+        <Row38>
+          <Sizes/>
+        </Row38>
+        <Row39>
+          <Sizes/>
+        </Row39>
+        <Row40>
+          <Sizes/>
+        </Row40>
+        <Row41>
+          <Sizes/>
+        </Row41>
+        <Row42>
+          <Sizes/>
+        </Row42>
+        <Row43>
+          <Sizes/>
+        </Row43>
+        <Row44>
+          <Sizes/>
+        </Row44>
+        <Row45>
+          <Sizes/>
+        </Row45>
+        <Row46>
+          <Sizes/>
+        </Row46>
+        <Row47>
+          <Sizes/>
+        </Row47>
+        <Row48>
+          <Sizes/>
+        </Row48>
+        <Row49>
+          <Sizes/>
+        </Row49>
+        <Row50>
+          <Sizes/>
+        </Row50>
+        <Row51>
+          <Sizes/>
+        </Row51>
+        <Row52>
+          <Sizes/>
+        </Row52>
+        <Row53>
+          <Sizes/>
+        </Row53>
+        <Row54>
+          <Sizes/>
+        </Row54>
+        <Row55>
+          <Sizes/>
+        </Row55>
+        <Row56>
+          <Sizes/>
+        </Row56>
+        <Row57>
+          <Sizes/>
+        </Row57>
+        <Row58>
+          <Sizes/>
+        </Row58>
+        <Row59>
+          <Sizes/>
+        </Row59>
+        <Row60>
+          <Sizes/>
+        </Row60>
+        <Row61>
+          <Sizes/>
+        </Row61>
+        <Row62>
+          <Sizes/>
+        </Row62>
+        <Row63>
+          <Sizes/>
+        </Row63>
+        <Row64>
+          <Sizes/>
+        </Row64>
+        <Row65>
+          <Sizes/>
+        </Row65>
+        <Row66>
+          <Sizes/>
+        </Row66>
+        <Row67>
+          <Sizes/>
+        </Row67>
+        <Row68>
+          <Sizes/>
+        </Row68>
       </Top>
       <Left>
         <Row0>
@@ -164,16 +413,16 @@
               <Rect>
                 <Top>-2</Top>
                 <Left>-2</Left>
-                <Bottom>572</Bottom>
-                <Right>122</Right>
+                <Bottom>584</Bottom>
+                <Right>198</Right>
                 <x>-2</x>
                 <y>-2</y>
-                <xscreen>124</xscreen>
-                <yscreen>196</yscreen>
-                <sizeHorzCX>125379</sizeHorzCX>
-                <sizeHorzCY>241677</sizeHorzCY>
-                <sizeVertCX>125379</sizeVertCX>
-                <sizeVertCY>707768</sizeVertCY>
+                <xscreen>200</xscreen>
+                <yscreen>200</yscreen>
+                <sizeHorzCX>125000</sizeHorzCX>
+                <sizeHorzCY>241838</sizeHorzCY>
+                <sizeVertCX>125000</sizeVertCX>
+                <sizeVertCY>708585</sizeVertCY>
               </Rect>
             </Wnd0>
           </Sizes>
@@ -191,16 +440,16 @@
               <Rect>
                 <Top>-2</Top>
                 <Left>-2</Left>
-                <Bottom>194</Bottom>
-                <Right>991</Right>
+                <Bottom>198</Bottom>
+                <Right>1602</Right>
                 <x>-2</x>
                 <y>-2</y>
-                <xscreen>993</xscreen>
-                <yscreen>196</yscreen>
-                <sizeHorzCX>1004044</sizeHorzCX>
-                <sizeHorzCY>241677</sizeHorzCY>
-                <sizeVertCX>125379</sizeVertCX>
-                <sizeVertCY>241677</sizeVertCY>
+                <xscreen>1604</xscreen>
+                <yscreen>200</yscreen>
+                <sizeHorzCX>1002500</sizeHorzCX>
+                <sizeHorzCY>241838</sizeHorzCY>
+                <sizeVertCX>125000</sizeVertCX>
+                <sizeVertCY>241838</sizeVertCY>
               </Rect>
             </Wnd1>
           </Sizes>

@@ -2154,6 +2154,12 @@
     <name>$PROJ_DIR$\main.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\motion.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\pwm.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\spi.c</name>
   </file>
 </project>
