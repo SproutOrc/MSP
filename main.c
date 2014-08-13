@@ -3,11 +3,15 @@
 #include "spi.h"
 
 
+
 void SetVCoreUp(unsigned int level);
 
 unsigned char proximtyData[2];
 unsigned char frequencyData[3];
-unsigned char Data[5]={2,3,4,5,6};;
+
+unsigned char data[6];
+unsigned char *sendDataValue;
+unsigned char maxSendCount;
 
 unsigned long fre;
 unsigned int pro;
@@ -15,21 +19,51 @@ unsigned int pro;
 #define RPMIN 0x3a
 #define RPMAX 0x13
 
-void initUART(void)
+unsigned int a;
+unsigned int b;
+
+void initUART()
 {
-    UCA0CTL1 = UCSWRST;    //ÖÃÎ»UCSWRST,Ê¹USCI¸´Î»£¬ÔÚÆäÎª1Ê±³õÊ¼»¯ËùÓÐUSCI¼Ä´æÆ÷
-    UCA0CTL0 &= ~UC7BIT;       //ÉèÖÃÊý¾Ý³¤¶ÈÎª8Î»
-    UCA0BR0 = 0x03;         //ÉèÖÃ²¨ÌØÂÊÎª9600
+    P3SEL |= BIT3 + BIT4;   //P3.3ä¸ºUCA0TXD
+    UCA0CTL1 |= UCSWRST;    //ç½®ä½UCSWRST,ä½¿USCIå¤ä½ï¼Œåœ¨å…¶ä¸º1æ—¶åˆå§‹åŒ–æ‰€æœ‰USCIå¯„å­˜å™¨
+    UCA0CTL1 |= UCSSEL_1;
+    UCA0BR0 = 0x03;         //è®¾ç½®æ³¢ç‰¹çŽ‡ä¸º9600
     UCA0BR1 = 0x00;
-    UCA0MCTL= 0x06;
+    UCA0MCTL= UCBRS_3 + UCBRF_0;
+    UCA0CTL1 &= ~UCSWRST;   //è½¯ä»¶æ¸…é™¤UCSWRST
+    UCA0IE |= UCRXIE;       // ä½¿èƒ½æŽ¥æ”¶ä¸­æ–­
+}
+
+#pragma vector = USCI_A0_VECTOR
+__interrupt void USART_A0()
+{
     
-    UCA0CTL1 |= UCSSEL__ACLK;  //Ñ¡Ôñ¸¨ÖúÊ±ÖÓ32KHz
-    P3SEL |= BIT3;             //P3.3ÎªUCA0TXD
-    P3DIR |= BIT3;
+    switch(__even_in_range(UCA0IV, 4)) {
+        case 0 :
+        break;
+        case 2 :
+        break;
+        case 4 :
+        
+            
+        break;
+        default :break;
+    }
+}
 
-    UCA0CTL1 &= ~UCSWRST;   //Èí¼þÇå³ýUCSWRST
-    UCA1IE |= UCRXIE;       // Ê¹ÄÜ½ÓÊÕÖÐ¶Ï
-
+void sendDataWithUART(unsigned char n)
+{
+    static unsigned char sendCount = 0;
+    while(1) {
+        if (sendCount >= n) {
+            sendCount = 0;
+            break;
+        } else {
+            UCA0TXBUF = data[sendCount];
+            while (!(UCA0IFG & UCTXIFG));
+            sendCount += 1;
+        }
+    }
 }
 
 void initClock()
@@ -45,8 +79,8 @@ void initClock()
                                                // (731 + 1) * 32768 = 24MHz
                                                // Set FLL Div = fDCOCLK/2
     __bic_SR_register(SCG0);                  // Enable the FLL control loop
-    UCSCTL4 |= SELA__XT1CLK + SELS__XT1CLK +SELM__DCOCLK; //ACLK,SMCLK,MCLK Source select
-    //UCSCTL5 |= ;                                   //ACLK output divide
+    UCSCTL4 |= SELA__DCOCLK + SELS__REFOCLK + SELM__DCOCLK; //ACLK,SMCLK,MCLK Source select
+    UCSCTL5 |= DIVPA_2;                                   //ACLK output divide
     UCSCTL6 |= XT1DRIVE_3 + XCAP_0;                       //XT1 cap
 }
 
@@ -70,13 +104,16 @@ void initPort()
     // initialize SPI
     P4DIR |= BIT0;  // Output
     P4SEL &= ~BIT0;
+    
+    P2SEL |= BIT2;
+    P2DIR |= BIT2;
 }
 
 void initSPI()
 {
     //SPI SETUP
     P4SEL |=BIT1 + BIT2 + BIT3;
-    UCB1CTL1 |=UCSWRST;
+    UCB1CTL1 |= UCSWRST;
     UCB1CTL0 |= UCMST+UCMSB+UCSYNC+UCCKPL;   // 3-pin, 8-bit SPI master,Clock polarity high, MSB
     UCB1CTL1 |= UCSSEL_1;                 // CLOCK ACLK
     UCB1BR0 = 0x06;
@@ -110,26 +147,24 @@ void initLDC1000()
 }
 
 void main(void) {
-
+    int i;
     WDTCTL = WDTPW | WDTHOLD;   // Stop watchdog timer
-    unsigned int i;
-    unsigned int x; 
-    unsigned int y;
+/**
     SetVCoreUp(1);
     SetVCoreUp(2);
-    SetVCoreUp(3);
+    SetVCoreUp(3);*/
     
-    initClock();
+//   initClock();
     initPort();
     initSPI();
-    
     initLDC1000();
     initUART();
-    _BIS_SR(GIE);           //¿ª¿ÉÆÁ±ÎÖÐ¶Ï
+    _EINT();
     
 
     //read all registers using extended SPI
     while (1) {
+        
         spi_readBytes(LDC1000_CMD_PROXLSB,&proximtyData[0],2);
         spi_readBytes(LDC1000_CMD_FREQCTRLSB,&frequencyData[0],3);
         pro = 0;
@@ -143,21 +178,18 @@ void main(void) {
         fre += frequencyData[1];
         fre <<= 8;
         fre += frequencyData[0];
-
-/***
-        Data[0] = proximtyData[0];
-        Data[1] = proximtyData[1];;
-        Data[2] = frequencyData[0];
-        Data[3] = frequencyData[1];
-        Data[4] = frequencyData[2];
- */       
-        for(i=0;i<5;i++)
-        {
-            UCA0TXBUF = Data[i];
-            while (!(UCA0IFG & UCTXIFG));
-        }
-
-        //__no_operation();
+        i++;
+        data[0] = 0xff;
+        data[1] = proximtyData[0];
+        data[2] = proximtyData[1];;
+        data[3] = frequencyData[0];
+        data[4] = frequencyData[1];
+        data[5] = frequencyData[2];
+        
+        sendDataWithUART(6);
+        for (a = 500; a > 0; --a)
+            for (b = 50; b > 0; --b);
+       __no_operation();
     }
 }
 

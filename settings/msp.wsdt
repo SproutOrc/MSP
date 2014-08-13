@@ -4,115 +4,84 @@
   <ConfigDictionary>
     <CurrentConfigs>
       <Project>LDC/Debug</Project>
-      <Project>LDC_1000/Debug</Project>
     </CurrentConfigs>
-    <CurrentProj>LDC_1000</CurrentProj>
-    <OverviewSelected>0</OverviewSelected>
   </ConfigDictionary>
   <Desktop>
     <Static>
       <Workspace>
         <ColumnWidths>
-          <Column0>225</Column0>
+          <Column0>48</Column0>
           <Column1>27</Column1>
           <Column2>27</Column2>
           <Column3>27</Column3>
         </ColumnWidths>
       </Workspace>
+      <TerminalIO/>
       <Build>
         <ColumnWidth0>20</ColumnWidth0>
-        <ColumnWidth1>1155</ColumnWidth1>
-        <ColumnWidth2>308</ColumnWidth2>
-        <ColumnWidth3>77</ColumnWidth3>
+        <ColumnWidth1>702</ColumnWidth1>
+        <ColumnWidth2>187</ColumnWidth2>
+        <ColumnWidth3>46</ColumnWidth3>
       </Build>
-      <TerminalIO/>
     </Static>
     <Windows>
-      <Wnd2>
+      <Wnd0>
         <Tabs>
           <Tab>
-            <Identity>TabID-6186-751</Identity>
+            <Identity>TabID-27444-15595</Identity>
             <TabName>Workspace</TabName>
             <Factory>Workspace</Factory>
             <Session>
               <NodeDict>
                 <ExpandedNode>LDC</ExpandedNode>
-                <ExpandedNode>LDC/Output</ExpandedNode>
-                <ExpandedNode>LDC/config.c</ExpandedNode>
-                <ExpandedNode>LDC/main.c</ExpandedNode>
-                <ExpandedNode>LDC/spi.c</ExpandedNode>
-                <ExpandedNode>LDC_1000</ExpandedNode>
-                <ExpandedNode>LDC_1000/config.c</ExpandedNode>
-                <ExpandedNode>LDC_1000/main.c</ExpandedNode>
-                <ExpandedNode>LDC_1000/spi.c</ExpandedNode>
               </NodeDict>
             </Session>
           </Tab>
         </Tabs>
         <SelectedTab>0</SelectedTab>
-      </Wnd2>
-      <Wnd3>
+      </Wnd0>
+      <Wnd1>
         <Tabs>
           <Tab>
-            <Identity>TabID-1669-2063</Identity>
+            <Identity>TabID-3333-15638</Identity>
             <TabName>Build</TabName>
             <Factory>Build</Factory>
             <Session/>
           </Tab>
         </Tabs>
         <SelectedTab>0</SelectedTab>
-      </Wnd3>
+      </Wnd1>
     </Windows>
     <Editor>
       <Pane>
         <Tab>
           <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\..\MSP430F149AY_LDC_1000\main.c</Filename>
-          <XPos>0</XPos>
-          <YPos>0</YPos>
-          <SelStart>0</SelStart>
-          <SelEnd>0</SelEnd>
-          <XPos2>0</XPos2>
-          <YPos2>47</YPos2>
-          <SelStart2>1837</SelStart2>
-          <SelEnd2>1837</SelEnd2>
+          <Filename>$WS_DIR$\..\..\Soft\IAR Systems\Embedded Workbench 7.0\430\doc\infocenter\index.ENU.html</Filename>
         </Tab>
         <Tab>
           <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\..\MSP430F149AY_LDC_1000\spi.h</Filename>
+          <Filename>$WS_DIR$\main.c</Filename>
           <XPos>0</XPos>
           <YPos>0</YPos>
           <SelStart>0</SelStart>
           <SelEnd>0</SelEnd>
           <XPos2>0</XPos2>
-          <YPos2>0</YPos2>
-          <SelStart2>125</SelStart2>
-          <SelEnd2>139</SelEnd2>
+          <YPos2>180</YPos2>
+          <SelStart2>5197</SelStart2>
+          <SelEnd2>5197</SelEnd2>
         </Tab>
+        <ActiveTab>1</ActiveTab>
         <Tab>
           <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\..\MSP430F149AY_LDC_1000\spi.c</Filename>
+          <Filename>$WS_DIR$\spi.c</Filename>
           <XPos>0</XPos>
           <YPos>0</YPos>
           <SelStart>0</SelStart>
           <SelEnd>0</SelEnd>
           <XPos2>0</XPos2>
-          <YPos2>48</YPos2>
-          <SelStart2>678</SelStart2>
-          <SelEnd2>678</SelEnd2>
-        </Tab>
-        <ActiveTab>2</ActiveTab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\..\MSP430F149AY_LDC_1000\config.c</Filename>
-          <XPos>0</XPos>
-          <YPos>0</YPos>
-          <SelStart>0</SelStart>
-          <SelEnd>0</SelEnd>
-          <XPos2>0</XPos2>
-          <YPos2>0</YPos2>
-          <SelStart2>13</SelStart2>
-          <SelEnd2>13</SelEnd2>
+          <YPos2>50</YPos2>
+          <SelStart2>1318</SelStart2>
+          <SelEnd2>1318</SelEnd2>
         </Tab>
       </Pane>
       <ActivePane>0</ActivePane>
@@ -128,9 +97,9 @@
       <Top>
         <Row0>
           <Sizes>
-            <Toolbar-03512D78>
+            <Toolbar-02DE2210>
               <key>iaridepm.enu1</key>
-            </Toolbar-03512D78>
+            </Toolbar-02DE2210>
           </Sizes>
         </Row0>
         <Row1>
@@ -157,26 +126,56 @@
         <Row8>
           <Sizes/>
         </Row8>
+        <Row9>
+          <Sizes/>
+        </Row9>
+        <Row10>
+          <Sizes/>
+        </Row10>
+        <Row11>
+          <Sizes/>
+        </Row11>
+        <Row12>
+          <Sizes/>
+        </Row12>
+        <Row13>
+          <Sizes/>
+        </Row13>
+        <Row14>
+          <Sizes/>
+        </Row14>
+        <Row15>
+          <Sizes/>
+        </Row15>
+        <Row16>
+          <Sizes/>
+        </Row16>
+        <Row17>
+          <Sizes/>
+        </Row17>
+        <Row18>
+          <Sizes/>
+        </Row18>
       </Top>
       <Left>
         <Row0>
           <Sizes>
-            <Wnd2>
+            <Wnd0>
               <Rect>
                 <Top>-2</Top>
                 <Left>-2</Left>
-                <Bottom>584</Bottom>
-                <Right>299</Right>
+                <Bottom>572</Bottom>
+                <Right>122</Right>
                 <x>-2</x>
                 <y>-2</y>
-                <xscreen>200</xscreen>
-                <yscreen>200</yscreen>
-                <sizeHorzCX>125000</sizeHorzCX>
-                <sizeHorzCY>241838</sizeHorzCY>
-                <sizeVertCX>188125</sizeVertCX>
-                <sizeVertCY>708585</sizeVertCY>
+                <xscreen>124</xscreen>
+                <yscreen>196</yscreen>
+                <sizeHorzCX>125379</sizeHorzCX>
+                <sizeHorzCY>241677</sizeHorzCY>
+                <sizeVertCX>125379</sizeVertCX>
+                <sizeVertCY>707768</sizeVertCY>
               </Rect>
-            </Wnd2>
+            </Wnd0>
           </Sizes>
         </Row0>
       </Left>
@@ -188,22 +187,22 @@
       <Bottom>
         <Row0>
           <Sizes>
-            <Wnd3>
+            <Wnd1>
               <Rect>
                 <Top>-2</Top>
                 <Left>-2</Left>
-                <Bottom>198</Bottom>
-                <Right>1602</Right>
+                <Bottom>194</Bottom>
+                <Right>991</Right>
                 <x>-2</x>
                 <y>-2</y>
-                <xscreen>1604</xscreen>
-                <yscreen>200</yscreen>
-                <sizeHorzCX>1002500</sizeHorzCX>
-                <sizeHorzCY>241838</sizeHorzCY>
-                <sizeVertCX>125000</sizeVertCX>
-                <sizeVertCY>241838</sizeVertCY>
+                <xscreen>993</xscreen>
+                <yscreen>196</yscreen>
+                <sizeHorzCX>1004044</sizeHorzCX>
+                <sizeHorzCY>241677</sizeHorzCY>
+                <sizeVertCX>125379</sizeVertCX>
+                <sizeVertCY>241677</sizeVertCY>
               </Rect>
-            </Wnd3>
+            </Wnd1>
           </Sizes>
         </Row0>
       </Bottom>
