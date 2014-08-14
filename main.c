@@ -38,15 +38,21 @@ void initUART()
 #pragma vector = USCI_A0_VECTOR
 __interrupt void USART_A0()
 {
-    
+    static char re = 0;
     switch(__even_in_range(UCA0IV, 4)) {
         case 0 :
         break;
         case 2 :
+            if (re == 0) {
+                TA0CCR2 = UCA0RXBUF / 255.0 * 1500;
+                re = 1;
+            }
+            else {
+                TA0CCR3 = UCA0RXBUF / 255.0 * 1500;
+                re = 0;
+            }
         break;
-        case 4 :
-        
-            
+        case 4 : 
         break;
         default :break;
     }
@@ -169,10 +175,9 @@ void main(void) {
     initMotion();
     initPWM();
     _EINT();
-    stop();
-    
     //read all registers using extended SPI
     while (1) {
+        
         spi_readBytes(LDC1000_CMD_PROXLSB,&proximtyData[0],2);
         spi_readBytes(LDC1000_CMD_FREQCTRLSB,&frequencyData[0],3);
         pro = 0;
@@ -197,6 +202,7 @@ void main(void) {
         sendDataWithUART(6);
         for (a = 500; a > 0; --a)
             for (b = 50; b > 0; --b);
+        
        __no_operation();
     }
 }
