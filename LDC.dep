@@ -6,149 +6,65 @@
   <configuration>
     <name>Debug</name>
     <outputs>
-      <file>$PROJ_DIR$\Debug\Exe\LDC.ulp</file>
-      <file>$PROJ_DIR$\LDC1000_cmd.h</file>
-      <file>$TOOLKIT_DIR$\inc\intrinsics.h</file>
-      <file>$PROJ_DIR$\..\MSP430F5529UART\motion.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\motion.pbi</file>
-      <file>$PROJ_DIR$\motion.h</file>
-      <file>$TOOLKIT_DIR$\config\linker\multiplier32_loc2.xcl</file>
-      <file>$PROJ_DIR$\..\MSP430F5529UART\motion.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\motion.r43</file>
-      <file>$PROJ_DIR$\..\MSP430FFT\config.h</file>
-      <file>C:\Users\Sprout\Desktop\&#x65B0;&#x5eFA;&#x6587;&#x4eF6;&#x5939;\main.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\LDC.pbd</file>
       <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.r43</file>
+      <file>$PROJ_DIR$\spi.h</file>
+      <file>$TOOLKIT_DIR$\config\linker\multiplier32_loc2.xcl</file>
+      <file>$PROJ_DIR$\pwm.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\motion.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\pwm.r43</file>
       <file>$PROJ_DIR$\Debug\Obj\main.r43</file>
+      <file>$TOOLKIT_DIR$\inc\msp430f5529.h</file>
+      <file>$PROJ_DIR$\Debug\Exe\LDC.d43</file>
+      <file>$PROJ_DIR$\Debug\Obj\pwm.pbi</file>
+      <file>$PROJ_DIR$\pwm.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\LDC.pbd</file>
+      <file>$PROJ_DIR$\Debug\Exe\LDC.ulp</file>
       <file>$PROJ_DIR$\motion.c</file>
       <file>$TOOLKIT_DIR$\config\linker\lnk430f5529.xcl</file>
+      <file>$PROJ_DIR$\motion.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\motion.pbi</file>
       <file>$PROJ_DIR$\spi.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
       <file>$PROJ_DIR$\main.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\spi.r43</file>
-      <file>$PROJ_DIR$\Debug\Exe\LDC.d43</file>
-      <file>$PROJ_DIR$\spi.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
       <file>$PROJ_DIR$\Debug\Obj\spi.pbi</file>
       <file>$TOOLKIT_DIR$\inc\in430.h</file>
-      <file>$TOOLKIT_DIR$\inc\msp430f5529.h</file>
-      <file>$TOOLKIT_DIR$\doc\infocenter\index.ENU.html</file>
-      <file>$PROJ_DIR$\..\..\Project\MSP430F149\DM430-L&#x6D4B;&#x8BD5;&#x793A;&#x4F8B;&#x6e90;&#x7A0B;&#x5e8F;\DM430-L 2014\TIMERA_LED\main.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\pwm.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\pwm.r43</file>
-      <file>$PROJ_DIR$\pwm.h</file>
-      <file>$PROJ_DIR$\pwm.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\spi.r43</file>
+      <file>$PROJ_DIR$\LDC1000_cmd.h</file>
+      <file>$TOOLKIT_DIR$\inc\intrinsics.h</file>
     </outputs>
-    <file>
-      <name>$PROJ_DIR$\..\MSP430F5529UART\motion.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 4</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 7 24 23 2</file>
-        </tool>
-        <tool>
-          <name>ICC430</name>
-          <file> 7 24 23 2</file>
-        </tool>
-      </inputs>
-    </file>
     <file>
       <name>[ROOT_NODE]</name>
       <outputs>
         <tool>
-          <name>XLINK</name>
-          <file> 20</file>
-        </tool>
-        <tool>
           <name>ULP430</name>
-          <file> 0</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>C:\Users\Sprout\Desktop\&#x65B0;&#x5eFA;&#x6587;&#x4eF6;&#x5939;\main.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 17</file>
+          <file> 12</file>
         </tool>
         <tool>
-          <name>ICC430</name>
-          <file> 13</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\motion.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 4</file>
-        </tool>
-        <tool>
-          <name>ICC430</name>
+          <name>XLINK</name>
           <file> 8</file>
         </tool>
       </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 5 24 23 2</file>
-        </tool>
-        <tool>
-          <name>ICC430</name>
-          <file> 5 24 23 2</file>
-        </tool>
-      </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\spi.c</name>
+      <name>$PROJ_DIR$\pwm.c</name>
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 22</file>
+          <file> 9</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 19</file>
+          <file> 5</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 24 23 2 21</file>
+          <file> 10 7 21 24</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 24 23 2 21</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\main.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 17</file>
-        </tool>
-        <tool>
-          <name>ICC430</name>
-          <file> 13</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 24 23 2 1 21 5 29</file>
-        </tool>
-        <tool>
-          <name>ICC430</name>
-          <file> 24 23 2 1 21 5 29</file>
+          <file> 10 7 21 24</file>
         </tool>
       </inputs>
     </file>
@@ -157,30 +73,76 @@
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 15 6 13 8 28 19 12</file>
+          <file> 14 2 6 4 5 22 0</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\pwm.c</name>
+      <name>$PROJ_DIR$\motion.c</name>
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 27</file>
+          <file> 16</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 28</file>
+          <file> 4</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 29 24 23 2</file>
+          <file> 15 7 21 24</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 29 24 23 2</file>
+          <file> 15 7 21 24</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\spi.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 20</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 22</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 7 21 24 1</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 7 21 24 1</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 19</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 6</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 7 21 24 23 1 15 10</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 7 21 24 23 1 15 10</file>
         </tool>
       </inputs>
     </file>

@@ -29,7 +29,7 @@ void initMotion()
 void forntMotion(u16 leftSpeed, u16 rightSpeed)
 {
     TA0CCR2 = leftSpeed;
-    TA0CCR3 = rightSpeed;
+    TA0CCR1 = rightSpeed;
     
     IN1_CLR;
     IN2_SET;
@@ -41,7 +41,7 @@ void forntMotion(u16 leftSpeed, u16 rightSpeed)
 void backMotion(u16 leftSpeed, u16 rightSpeed)
 {
     TA0CCR2 = leftSpeed;
-    TA0CCR3 = rightSpeed;
+    TA0CCR1 = rightSpeed;
     
     IN1_SET;
     IN2_CLR;
@@ -53,7 +53,7 @@ void backMotion(u16 leftSpeed, u16 rightSpeed)
 void rightMotion(u16 leftSpeed, u16 rightSpeed)
 {
     TA0CCR2 = leftSpeed;
-    TA0CCR3 = rightSpeed;
+    TA0CCR1 = rightSpeed;
     
     IN1_SET;
     IN2_CLR;
@@ -65,7 +65,7 @@ void rightMotion(u16 leftSpeed, u16 rightSpeed)
 void leftMotion(u16 leftSpeed, u16 rightSpeed)
 {
     TA0CCR2 = leftSpeed;
-    TA0CCR3 = rightSpeed;
+    TA0CCR1 = rightSpeed;
     
     IN1_CLR;
     IN2_SET;
@@ -75,7 +75,7 @@ void leftMotion(u16 leftSpeed, u16 rightSpeed)
     
 }
 
-void stop()
+void stopMotion()
 {
     IN1_CLR;
     IN2_CLR;

@@ -10,7 +10,7 @@ void forntMotion(u16 leftSpeed, u16 rightSpeed);
 void backMotion(u16 leftSpeed, u16 rightSpeed);
 void rightMotion(u16 leftSpeed, u16 rightSpeed);
 void leftMotion(u16 leftSpeed, u16 rightSpeed);
-void stop();
+void stopMotion();
 
 #endif
 
