@@ -7,11 +7,12 @@
 #define SAMPLE_COUNT 50
 #define MOTION_COUNT 10
 #define MAX_TURN_SPEED 700
-#define MAX_FORNT_SPEED 700
+#define MAX_FORNT_SPEED 600
+#define THE_COUNT_COIL  10
 //#define MOTION_SPEED 0
 #define MOTION_ERROR 50
 
-#define MAX_TIME 700
+#define MAX_TIME 100
 
 unsigned int MOTION_SPEED = 680;
 
@@ -165,6 +166,25 @@ void initSPI()
     UCB1CTL1 &= ~UCSWRST;
 }
 
+char isACoil(unsigned int *dataWithArray, unsigned int length)
+{
+    int i;
+    int count = 0;
+
+    for (i = 0; i < length; ++i)  {
+        if (count >= sideMinValue) {
+            count ++;
+        }
+    }
+
+    if (count > 10)
+        return 1;
+    else 
+        return 0;
+
+    
+}
+
 void initLDC1000()
 {
        //read all REG value using default setting
@@ -213,6 +233,7 @@ typedef enum {
     side,
     test,
     speed_test,
+    test_sample,
     blinkLED,
     getComValue
 }status;
@@ -277,6 +298,18 @@ unsigned int getMinOfArray(unsigned int *array, int length)
     return min;
 }
 
+unsigned int getCountWithValue(unsigned int *array, int length, unsigned int value)
+{
+    int i;
+    unsigned int count;
+    for (i = 0; i < length; ++i) {
+        if (*(array + i) > value) {
+            count ++;
+        }
+    }
+    return count;
+}
+
 void motionControl()
 {
     static status nowState  = blinkLED;
@@ -339,7 +372,7 @@ void motionControl()
                     filter[i] = getProximtyData();
                 }
                 sideMaxValue = getMaxOfArray(filter, SAMPLE_COUNT);
-                sideMinValue = getMinOfArray(filter, SAMPLE_COUNT);
+                sideMinValue = getMedianNum(filter, SAMPLE_COUNT);
                 if (sideMaxValue >= comValue + 50) {
                     data[0] = 0xff;
                     data[1] = (unsigned char)(sideMaxValue & 0x00ff); 
@@ -413,7 +446,7 @@ void motionControl()
         
         case lag :
             for (a = 500; a > 0; --a) 
-              for (b = 50; b > 0; --b);
+              for (b = 30; b > 0; --b);
             nowState = nextState;
             forntMotion(MAX_FORNT_SPEED, MAX_FORNT_SPEED);
         break;
@@ -529,11 +562,11 @@ void motionControl()
  /////////////////////////////////////////////////////////////////////////////       
         case stop :
             for (a = 500; a > 0; --a) 
-              for (b = 50; b > 0; --b);
+              for (b = 100; b > 0; --b);
             stopMotion();
             P8OUT |= BIT2;
         break;
-
+/////////////////////////////////////////////////////////////////////////////
         case test : 
             dataIn = P2IN & BIT1;
             if (dataIn == 0 && flag == 0) {
@@ -590,7 +623,32 @@ void motionControl()
                 }
             }
         break;
-        
+
+        case test_sample :
+            forntMotion(MAX_FORNT_SPEED, MAX_FORNT_SPEED);
+            motionValue = getProximtyData();
+            if(motionValue >= 8400 + 50) {
+                for (i = 0; i < SAMPLE_COUNT; ++i) {
+                    filter[i] = getProximtyData();
+                } 
+                stopMotion();
+                for (i = 0; i < SAMPLE_COUNT; ++i) {
+                    data[0] = 0xff;
+                    data[1] = (unsigned char)(filter[i] & 0x00ff); 
+                    data[2] = (unsigned char)((filter[i] >> 8) & 0x00ff);
+                    sendDataWithUART(data, 5);
+                } 
+                motionValue = getMaxOfArray(filter, SAMPLE_COUNT);
+                data[0] = 0xff;
+                data[1] = (unsigned char)(motionValue & 0x00ff); 
+                data[2] = (unsigned char)((motionValue >> 8) & 0x00ff);
+                sendDataWithUART(data, 5);
+                
+                while(1);
+            }
+
+        break;
+
         default : 
         ;
         break;
