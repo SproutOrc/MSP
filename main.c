@@ -4,17 +4,24 @@
 #include "motion.h"
 #include "pwm.h"
 
-#define SAMPLE_COUNT 50
-#define MOTION_COUNT 10
+#define CPU_F ((double)4000000) 
+#define delay_us(x) __delay_cycles((long)(CPU_F*(double)x/1000000.0)) 
+#define delay_ms(x) __delay_cycles((long)(CPU_F*(double)x/1000.0)) 
+
+#define OUTSIDE 0
+#define INSIDE 1
+
+#define SAMPLE_COUNT 200
 #define MAX_TURN_SPEED 700
 #define MAX_FORNT_SPEED 600
-#define THE_COUNT_COIL  10
+
+#define SIDE_ERROR 150
+
 //#define MOTION_SPEED 0
-#define MOTION_ERROR 50
+//
+#define DELAY_TIME 70
 
-#define MAX_TIME 100
-
-unsigned int MOTION_SPEED = 680;
+#define MAX_TIME 5000
 
 void SetVCoreUp(unsigned int level);
 
@@ -24,8 +31,6 @@ unsigned char proximtyData[2];
 unsigned char frequencyData[3];
 
 unsigned char data[6];
-unsigned char *sendDataValue;
-unsigned char maxSendCount;
 
 unsigned long fre;
 unsigned int pro;
@@ -33,11 +38,9 @@ unsigned int pro;
 
 ///////////////////////////////////
 unsigned int comValue = 0;
-unsigned int sideMaxValue = 0;
+unsigned int sideValue = 0;
 unsigned int sideMinValue = 0;
 ///////////////////////////////////
-
-unsigned int filter[SAMPLE_COUNT] = {0};
 
 #define RPMIN 0x3a
 #define RPMAX 0x13
@@ -65,17 +68,7 @@ __interrupt void USART_A0()
         case 0 :
         break;
         case 2 :
-          /*
-            if (re == 0) {
-                TA0CCR2 = UCA0RXBUF / 255.0 * 1500;
-                re = 1;
-            }
-            else {
-                TA0CCR3 = UCA0RXBUF / 255.0 * 1500;
-                re = 0;
-            }
-          */
-          MOTION_SPEED = UCA0RXBUF / 255.0 * 1500;
+         
         break;
         case 4 : 
         break;
@@ -83,12 +76,14 @@ __interrupt void USART_A0()
     }
 }
 
-void sendDataWithUART(unsigned char *data, unsigned char n)
+void sendDataWithUART(unsigned int sendData)
 {
     
     static unsigned char sendCount = 0;
+    data[0] = (unsigned char)(sendData & 0x00ff); 
+    data[1] = (unsigned char)(sendData >> 8) & 0x00ff; 
     while(1) {
-        if (sendCount >= n) {
+        if (sendCount >= 2) {
             sendCount = 0;
             break;
         } else {
@@ -133,6 +128,7 @@ void initPort()
     P2DIR &= ~BIT1;
     P2OUT |= BIT1;
     P2REN |= BIT1;
+    
 
     // buzzer
     P8SEL &= ~BIT2;
@@ -160,30 +156,13 @@ void initSPI()
     P4SEL |=BIT1 + BIT2 + BIT3;
     UCB1CTL1 |= UCSWRST;
     UCB1CTL0 |= UCMST+UCMSB+UCSYNC+UCCKPL;   // 3-pin, 8-bit SPI master,Clock polarity high, MSB
-    UCB1CTL1 |= UCSSEL_1;                 // CLOCK ACLK
+    UCB1CTL1 |= UCSSEL__SMCLK;                 // CLOCK ACLK
     UCB1BR0 = 0x06;
     UCB1BR1 = 0;
     UCB1CTL1 &= ~UCSWRST;
 }
 
-char isACoil(unsigned int *dataWithArray, unsigned int length)
-{
-    int i;
-    int count = 0;
 
-    for (i = 0; i < length; ++i)  {
-        if (count >= sideMinValue) {
-            count ++;
-        }
-    }
-
-    if (count > 10)
-        return 1;
-    else 
-        return 0;
-
-    
-}
 
 void initLDC1000()
 {
@@ -221,22 +200,6 @@ unsigned int getProximtyData()
     return pro;
 }
 
-typedef enum {
-    fornt,
-    getMotionValue,
-    lag,
-    right,
-    left,
-    wait,
-    line,
-    stop,
-    side,
-    test,
-    speed_test,
-    test_sample,
-    blinkLED,
-    getComValue
-}status;
 
 
 unsigned int getMedianNum(unsigned int *bArray, int iFilterLen)  
@@ -310,345 +273,429 @@ unsigned int getCountWithValue(unsigned int *array, int length, unsigned int val
     return count;
 }
 
+
+char isSide(unsigned int *sampWithArray, unsigned int length)
+{
+
+    return 1;
+}
+
+unsigned int maxValue() 
+{
+    unsigned int getValue;
+    unsigned int max = 0;
+    int i;
+    for (i = 0; i < SAMPLE_COUNT; ++i) {
+        getValue = getProximtyData();
+        if(getValue > max && getValue < 15000) {
+            max = getValue;
+        }
+    }
+    return max;
+}
+
+typedef enum {
+    fornt,
+    right,
+    left,
+    line,
+    stop,
+    side,
+    test,
+    coilStop,
+    blinkLED,
+    coilTest,
+    getComValue,
+    inSerachCoil
+}status;
+
+char isACoil(status nowState)
+{
+    unsigned char i;
+    unsigned char a[5];
+    unsigned int value;
+    while (1) {
+        if (nowState == line) {
+            for(i = 0; i < 5; ++i) {
+                forntMotion(800, 800);
+                delay_ms(10);
+                stopMotion();
+                delay_ms(20);
+                value = maxValue();
+                if(value <= (sideValue + SIDE_ERROR) 
+                   && value >= (comValue + 50)) {
+                    a[i] = 1;
+                } else {
+                    a[i] = 0;
+                }
+            }
+            
+            if ( a[0] + a[1] + a[2] + a[3] + a[4] >= 2) {
+                return 1;
+            }  else {
+                return 0;
+            }
+        } else if (nowState == right) {
+            //leftMotion(800, 800);
+        
+            for(i = 0; i < 5; ++i) {
+                rightMotion(800, 800);
+                delay_ms(10);
+                stopMotion();
+                delay_ms(20);
+                value = maxValue();
+                if(value <= (sideValue + SIDE_ERROR) 
+                   && value >= (comValue + 50)) {
+                    a[i] = 1;
+                } else {
+                    a[i] = 0;
+                }
+            }
+
+            if ( a[0] + a[1] + a[2] + a[3] + a[4] >= 2) {
+                return 1;
+            }  else {
+                return 0;
+            }
+
+        } else if (nowState == left) {
+            //rightMotion(800, 800);
+
+            for(i = 0; i < 5; ++i) {
+                leftMotion(800, 800);
+                delay_ms(10);
+                stopMotion();
+                delay_ms(20);
+                value = maxValue();
+                if(value <= (sideValue + SIDE_ERROR) 
+                   && value >= (comValue + 50)) {
+                    a[i] = 1;
+                } else {
+                    a[i] = 0;
+                }
+            }            
+            if ( a[0] + a[1] + a[2] + a[3] + a[4] >= 2) {
+                return 1;
+            }  else {
+                return 0;
+            }
+        }
+    }
+
+    
+}
+
+
+
+
 void motionControl()
 {
-    static status nowState  = blinkLED;
-    static status nextState = blinkLED;
-    static status lastState = blinkLED;
-    static char isInPane = 0;
-    static unsigned long time = 0;
-    static unsigned char flag = 0;
+    static status nowState  = inSerachCoil;
+    static status nextState = inSerachCoil;
+    static status lastState = inSerachCoil;
+    static unsigned int selValue = 0;
     
-    static unsigned int lastTurnValue = 0;
+    static char coilIsOpen = 0;
+    
+    static char isInPane = 0;
+    static unsigned int time = 0;
+    
+    static char flag = 0;
+    
     unsigned int motionValue;
     
    
     unsigned char dataIn; 
     
-    int i;
     switch(nowState) {
-        
+        case inSerachCoil :
+            delay_ms(20);
+            dataIn = P2IN & BIT1;
+            if (dataIn == 0) {
+                flag = 1;
+                coilIsOpen = 1;
+                nowState = blinkLED;
+                break;
+            } else {
+                nowState = blinkLED;
+                coilIsOpen = 0;
+                flag = 0;
+                break;
+            } 
+        break;
         case blinkLED :
             dataIn = P2IN & BIT1;
             if (dataIn == 0 && flag == 0) {
-                flag = 1;
                 nowState = getComValue;
+                forntMotion(MAX_FORNT_SPEED, MAX_FORNT_SPEED);
+                delay_ms(40);
                 break;
-            } else if (dataIn == 0x02){
+            } else if (dataIn != 0 && flag == 1) {
                 flag = 0;
-            }
-            if ((P4OUT & (BIT7)) == BIT7) {
+            } else if (P1IN & BIT1 == 0) {
+                nowState = coilTest;
+                break;
+            } else if ((P4OUT & (BIT7)) == BIT7) {
                 P4OUT &= ~BIT7;
             } else {
                 P4OUT |= BIT7;
             }
-            for (c = 2; c > 0; --c){
-                for (a = 500; a > 0; --a){
-                    for (b = 50; b > 0; --b);
-                }
-            }
+            
+
+            
+            delay_ms(80);
         break;
 ///////////////////////////////////////////////////////////////////////////        
         case getComValue:
-            for (i = 0; i < SAMPLE_COUNT; ++i) {
-                filter[i] = getProximtyData();
-            }
-            comValue = getMaxOfArray(filter, SAMPLE_COUNT);
-            
-            data[0] = 0xff;
-            data[1] = (unsigned char)(comValue & 0x00ff); 
-            data[2] = (unsigned char)((comValue >> 8) & 0x00ff); 
-            sendDataWithUART(data, 5);
-            
+            comValue = maxValue();
+            sendDataWithUART(comValue);
+            isInPane = OUTSIDE;
             nowState = fornt;
         break;
             
         case fornt :
-            forntMotion(MAX_FORNT_SPEED, MAX_FORNT_SPEED);
-
             motionValue = getProximtyData();
             if(motionValue >= comValue + 50) {
-                for (i = 0; i < SAMPLE_COUNT; ++i) {
-                    filter[i] = getProximtyData();
-                }
-                sideMaxValue = getMaxOfArray(filter, SAMPLE_COUNT);
-                sideMinValue = getMedianNum(filter, SAMPLE_COUNT);
-                if (sideMaxValue >= comValue + 50) {
-                    data[0] = 0xff;
-                    data[1] = (unsigned char)(sideMaxValue & 0x00ff); 
-                    data[2] = (unsigned char)(sideMaxValue >> 8) & 0x00ff; 
-                    sendDataWithUART(data, 5);
+                sideValue = maxValue();
+                motionValue = maxValue();
+                sideValue = sideValue > motionValue ? sideValue : motionValue;
+                if (sideValue >= comValue + 100) {
+                    sendDataWithUART(sideValue);
                     nowState = line;
                     lastState = left;
                     forntMotion(MAX_FORNT_SPEED, MAX_FORNT_SPEED);
-                    flag = 0;
-                    if (isInPane == 0) {
-                        isInPane = 1;
+                    delay_ms(40);
+                    if (isInPane == OUTSIDE) {
+                        isInPane = INSIDE;
                     } else {
-                        isInPane = 0;
+                        isInPane = OUTSIDE;
                     }
                     break;
                 }
             }
         break;
 
-        case side :
-            motionValue = getProximtyData();
-            if (motionValue <= (sideMaxValue + 200) 
-                && motionValue >= (comValue + 50)) {
-                for (a = 500; a > 0; --a) 
-                    for (b = 50; b > 0; --b);
-            } else if (lastState == left) {
-                nowState = right;
-                lastState = line;
-                rightMotion(MAX_TURN_SPEED, MAX_TURN_SPEED);
-            } else {
-                nowState = left;
-                lastState = line;
-                leftMotion(MAX_TURN_SPEED,MAX_TURN_SPEED);
-            }
-        break;
-
+//////////////////////////////////////////////////////////////////////
         case line : 
             motionValue = getProximtyData();
             if(motionValue >= comValue + 50) {
-                for (i = 0; i < SAMPLE_COUNT; ++i) {
-                    filter[i] = getProximtyData();
-                } 
-                motionValue = getMaxOfArray(filter, SAMPLE_COUNT);
-                // data[0] = 0xff;
-                // data[1] = (unsigned char)(motionValue & 0x00ff); 
-                // data[2] = (unsigned char)((motionValue >> 8) & 0x00ff);
-                // sendDataWithUART(data, 5);
-                if (motionValue >= sideMaxValue + 200) {
+                motionValue = maxValue();
+                if (motionValue >= sideValue + SIDE_ERROR) {
                     nowState = stop;
-                    backMotion(MAX_FORNT_SPEED, MAX_FORNT_SPEED);
-                    data[0] = 0xff;
-                    data[1] = (unsigned char)(motionValue & 0x00ff); 
-                    data[2] = (unsigned char)(motionValue >> 8) & 0x00ff; 
-                    sendDataWithUART(data, 5);
+                    stopMotion();
+                    lastState = line;
+                    sendDataWithUART(motionValue);
                     break;
-                } else if (motionValue <= (sideMaxValue + 200) 
-                        && motionValue >= (comValue + 50) ) {
+                } else if (motionValue >= (comValue + 50) && coilIsOpen == 1 && isACoil(line) == 1) {
+                    nowState = coilStop;
+                    break;
+                }else if (motionValue >= (comValue + 50) ) {
                     nowState = side;
-                    forntMotion(MAX_FORNT_SPEED, MAX_FORNT_SPEED);
-                    flag = 0;
-                    if (isInPane == 0) {
-                        isInPane = 1;
+                    
+                    if (lastState == left) {
+                        nextState = right;
                     } else {
-                        isInPane = 0;
+                        nextState = left;
                     }
+                    
+                    lastState = line;
+                    if (isInPane == OUTSIDE) {
+                        isInPane = INSIDE;
+                    } else {
+                        isInPane = OUTSIDE;
+                    }
+                    time = 0;
                     break;
                 } 
             }
 
         break;
-        
-        case lag :
-            for (a = 500; a > 0; --a) 
-              for (b = 30; b > 0; --b);
-            nowState = nextState;
-            forntMotion(MAX_FORNT_SPEED, MAX_FORNT_SPEED);
-        break;
+////////////////////////////////////////////////////////////////////////
+        case side :
+            delay_ms(DELAY_TIME);
+            motionValue = maxValue();
+            if (motionValue <= (sideValue + SIDE_ERROR) 
+                && motionValue >= (comValue + 50)) {
+                break;
+            } else if (nextState == left) {
+                nowState = left;
+                leftMotion(MAX_TURN_SPEED, MAX_TURN_SPEED);
+            } else if (nextState == right) {
+                nowState = right;
+                rightMotion(MAX_TURN_SPEED, MAX_TURN_SPEED);
+            } else {
+                nowState = line;
+                forntMotion(MAX_FORNT_SPEED, MAX_FORNT_SPEED);
+            }
+        break; 
  /////////////////////////////////////////////////////////////////////////////       
         case left :
             time++;
-            if (flag == 0) {
-                    for (a = 500; a > 0; --a) 
-                        for (b = 50; b > 0; --b);
 
-                    flag = 1;
-            }
             motionValue = getProximtyData();
             if(motionValue >= comValue + 50) {
-                
-                // leftMotion(MAX_TURN_SPEED,0);
-                for (i = 0; i < SAMPLE_COUNT; ++i) {
-                    filter[i] = getProximtyData();
-                } 
-                motionValue = getMaxOfArray(filter, SAMPLE_COUNT);
+                motionValue = maxValue();
 
-                if (motionValue >= sideMaxValue + 200 ) {
+                if (motionValue >= sideValue + SIDE_ERROR ) {
                     //sendDataWithUART(data, 5);
                     nowState = stop;
-                    leftMotion(0, MAX_TURN_SPEED);
-                    data[0] = 0xff;
-                    data[1] = (unsigned char)(motionValue & 0x00ff); 
-                    data[2] = (unsigned char)(motionValue >> 8) & 0x00ff; 
-                    sendDataWithUART(data, 5);
+                    lastState = left;
+                    stopMotion();
+                    sendDataWithUART(motionValue);
                     break;
-                } else if (motionValue < (sideMaxValue + 200) 
-                        && motionValue >= (comValue + 50) ) {
-                    nowState = lag;
+                } else if (motionValue >= (comValue + 50) == 1 && coilIsOpen == 1 && isACoil(left)) {
+                    nowState = coilStop;
+                    break;
+                } else if (motionValue >= (comValue + 50)) {
+                    nowState = side;
                     if (lastState == line) {
                         nextState = line;
                     } else {
-                        rightMotion(MAX_TURN_SPEED, MAX_TURN_SPEED);
                         nextState = right;
                     }
                     lastState = left;
-                    flag = 0;
+
                     if (isInPane == 0) {
                         isInPane = 1;
                     } else {
                         isInPane = 0;
                     }
-                    break;
-                } else if (time > MAX_TIME) {
-                    rightMotion(MAX_TURN_SPEED, MAX_TURN_SPEED);
-                    nowState = right;
-                    lastState = left;
                     time = 0;
-                    flag = 0;
+                    
                     break;
-                }
+                } 
+                
+            } else if (time > MAX_TIME) {
+                forntMotion(MAX_TURN_SPEED,MAX_TURN_SPEED);
+                nowState = line;
+                lastState = left;
+                time = 0;
+                break;
             }
         break;
 //////////////////////////////////////////////////////////////////        
         case right :
             time++;
-            if (flag == 0) {
-                for (a = 500; a > 0; --a) 
-                    for (b = 50; b > 0; --b);
-
-                flag = 1;
-            }
             motionValue = getProximtyData();
-            if(motionValue >= comValue + 50) {
-                for (i = 0; i < SAMPLE_COUNT; ++i) {
-                    filter[i] = getProximtyData();
-                } 
-                motionValue = getMaxOfArray(filter, SAMPLE_COUNT);
+            if(motionValue >= comValue + 50) { 
+                motionValue = maxValue();
 
-                if (motionValue >= sideMaxValue + 200) {
+                if (motionValue >= sideValue + SIDE_ERROR) {
                     nowState = stop;
-                    leftMotion(MAX_TURN_SPEED, 0);
-                    data[0] = 0xff;
-                    data[1] = (unsigned char)(motionValue & 0x00ff); 
-                    data[2] = (unsigned char)(motionValue >> 8) & 0x00ff; 
-                    sendDataWithUART(data, 5);
+                    lastState = right;
+                    stopMotion();
+                    sendDataWithUART(motionValue);
                     break;
-                } else if (motionValue < (sideMaxValue + 200) 
-                        && motionValue >= (comValue + 50)) {
-                    nowState = lag;
+                } else if (motionValue >= (comValue + 50) && coilIsOpen == 1 && isACoil(right) == 1 ) {
+                    nowState = coilStop;
+                    break;
+                } else if (motionValue >= (comValue + 50)) {
+                    nowState = side;
                     if (lastState == line) {
                         nextState = line;
                     } else {
-                        leftMotion(MAX_TURN_SPEED,MAX_TURN_SPEED);
                         nextState = left;
                     }
-                    
                     lastState = right;
-                    flag = 0;
+
                     if (isInPane == 0) {
                         isInPane = 1;
                     } else {
                         isInPane = 0;
                     }
-                    break;
-                } else if (time > MAX_TIME) {
-                    leftMotion(MAX_TURN_SPEED,MAX_TURN_SPEED);
-                    nowState = left;
-                    lastState = right;
                     time = 0;
-                    flag = 0;
                     break;
-                }
-            }
+                } 
+            } else if (time > MAX_TIME) {
+                forntMotion(MAX_TURN_SPEED,MAX_TURN_SPEED);
+                nowState = line;
+                lastState = right;
+                time = 0;
+                break;
+           }
         break;
-
-
-        
- /////////////////////////////////////////////////////////////////////////////       
-        case stop :
-            for (a = 500; a > 0; --a) 
-              for (b = 100; b > 0; --b);
+ 
+ /////////////////////////////////////////////////////////////////////////////  
+        case coilStop :
             stopMotion();
             P8OUT |= BIT2;
+            while(1);
+        break;
+        
+/////////////////////////////////////////////////////////////////////////////
+        case stop :
+            motionValue = 0;
+            if (lastState == line) {
+                backMotion(800, 800);
+                delay_ms(30);
+                while(1) {
+                    backMotion(800, 800);
+                    delay_ms(10);
+                    stopMotion();
+                    delay_ms(20);
+                    motionValue = maxValue();
+                    if (selValue < motionValue) {
+                        selValue = motionValue; 
+
+                    } else {
+                        forntMotion(800, 800);
+                        delay_ms(10);
+                        break;
+                    }
+                }
+            } else if (lastState == left) {
+                rightMotion(800, 800);
+                delay_ms(30);
+                while(1) {
+                    rightMotion(800, 800);
+                    delay_ms(10);
+                    stopMotion();
+                    delay_ms(20);
+                    motionValue = maxValue();
+                    if (selValue < motionValue) {
+                        selValue = motionValue; 
+
+                    } else {
+                        leftMotion(800, 800);
+                        delay_ms(10);
+                        break;
+                    }
+                }
+            } else {
+                leftMotion(800, 800);
+                while(1) {
+                    leftMotion(800, 800);
+                    delay_ms(10);
+                    stopMotion();
+                    delay_ms(20);
+                    motionValue = maxValue();
+                    if (selValue < motionValue) {
+                        selValue = motionValue; 
+
+                    } else {
+                        rightMotion(800, 800);
+                        delay_ms(10);
+                        break;
+                    }
+                }
+            }
+            stopMotion();
+            P8OUT |= BIT2;
+            while(1);
         break;
 /////////////////////////////////////////////////////////////////////////////
-        case test : 
-            dataIn = P2IN & BIT1;
-            if (dataIn == 0 && flag == 0) {
-                flag = 1;
-                motionValue = getProximtyData();
-                data[0] = 0xff;
-                data[1] = (unsigned char)(motionValue & 0x00ff); 
-                data[2] = (unsigned char)((motionValue >> 8) & 0x00ff);
-                sendDataWithUART(data, 5);
-                break;
-            } else if (dataIn == 0x02){
-                flag = 0;
-            }
-            if ((P4OUT & (BIT7)) == BIT7) {
-                P4OUT &= ~BIT7;
-            } else {
-                P4OUT |= BIT7;
-            }
-            for (c = 2; c > 0; --c){
-                for (a = 500; a > 0; --a){
-                    for (b = 50; b > 0; --b);
-                }
-            }
 
+        case test :
+            delay_ms(300);
+            forntMotion(800, 800);
+            delay_ms(20);
+            stopMotion();
+            while(1);
+        break;
+        
+        case coilTest :
             
         break;
-
-        case speed_test :
-             dataIn = P2IN & BIT1;
-             stopMotion();
-            if (dataIn == 0 && flag == 0) {
-                flag = 1;
-                motionValue = getProximtyData();
-                data[0] = 0xff;
-                data[1] = (unsigned char)(motionValue & 0x00ff); 
-                data[2] = (unsigned char)((motionValue >> 8) & 0x00ff);
-                sendDataWithUART(data, 5);
-                forntMotion(MAX_TURN_SPEED, MAX_TURN_SPEED);
-                for (a = 500; a > 0; --a) 
-                    for (b = 50; b > 0; --b);
-
-                break;
-            } else if (dataIn == 0x02){
-                flag = 0;
-            }
-            if ((P4OUT & (BIT7)) == BIT7) {
-                P4OUT &= ~BIT7;
-            } else {
-                P4OUT |= BIT7;
-            }
-            for (c = 2; c > 0; --c){
-                for (a = 500; a > 0; --a){
-                    for (b = 50; b > 0; --b);
-                }
-            }
-        break;
-
-        case test_sample :
-            forntMotion(MAX_FORNT_SPEED, MAX_FORNT_SPEED);
-            motionValue = getProximtyData();
-            if(motionValue >= 8400 + 50) {
-                for (i = 0; i < SAMPLE_COUNT; ++i) {
-                    filter[i] = getProximtyData();
-                } 
-                stopMotion();
-                for (i = 0; i < SAMPLE_COUNT; ++i) {
-                    data[0] = 0xff;
-                    data[1] = (unsigned char)(filter[i] & 0x00ff); 
-                    data[2] = (unsigned char)((filter[i] >> 8) & 0x00ff);
-                    sendDataWithUART(data, 5);
-                } 
-                motionValue = getMaxOfArray(filter, SAMPLE_COUNT);
-                data[0] = 0xff;
-                data[1] = (unsigned char)(motionValue & 0x00ff); 
-                data[2] = (unsigned char)((motionValue >> 8) & 0x00ff);
-                sendDataWithUART(data, 5);
-                
-                while(1);
-            }
-
-        break;
-
         default : 
         ;
         break;
